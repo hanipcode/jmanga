@@ -1,0 +1,8 @@
+#!/bin/bash
+#this is the simple installation script
+cp jManga /usr/bin/
+mkdir ~/.jManga
+chmod -R 777 ~/.jManga
+cp setting  ~/.jManga
+cp function  ~/.jManga
+cp variable ~/.jManga

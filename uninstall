@@ -1,0 +1,4 @@
+#!/bin/bash
+#this is the simple uninstallation installation script
+rm -rf jManga /usr/bin/
+rm -rf ~/.jManga

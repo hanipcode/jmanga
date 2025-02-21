@@ -1,0 +1,9 @@
+###############
+#  CHANGELOG  #
+###############
+This is the changelog file
+
+changelog for version 0.3
+- Change of algorithm for be able to bulk download
+- no more inserting patern
+- better user interface than version 0.2

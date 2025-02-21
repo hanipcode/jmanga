@@ -1,0 +1,19 @@
+###############
+# README FILE #
+###############
+I . HOW TO INSTALL
+  this is the step to install jManga
+  1. go to your downloaded folder
+    i.e : cd ~/Downloads/jManga-DownloadFolder
+  2. unpack the compressed file
+    i.e : tar zxvf jManga jManga-0.3.1.tar.gz
+  3. go to jManga extracted folder
+    i.e : cd jManga-0.3.1
+  4. change permission of install script
+    i.e : chmod +x install
+  5. Run Installation Script
+    i.e : ./install
+  6. Done!
+
+II. How to uninstall
+   same as before but use uninstall script instead of install script

@@ -1,0 +1,128 @@
+#!/bin/bash
+#external command used : Wget , curl , awk , tput (for interfacing) , grep , sed
+#calling function source and setting source
+source ~/.jManga/setting.j
+source ~/.jManga/function.j
+source ~/.jManga/variable.j
+#first time running (BASE_FOLDER Empty)
+if((${#BASE_FOLDER} == 0)); then
+  cls
+  sed -i '29s/.*/BASE_FOLDER=~\/Manga/' ~/.jManga/setting.j
+  #first time interface
+  echo "########################### welcome ##############################"
+  echo "#                                                                #"
+  echo "# This is the first time you run jManga !                        #"
+  echo "# Your manga folder by default set to your yourhomefolder/Manga  #"
+  echo "# you can edit it by editing setting.j in yourhomefolder/.jManga #"
+  echo "#                                                                #"
+  echo "##################################################################"
+  tput civis
+  echo ""
+  read -p "press any key to start using jManga!"
+  BASE_FOLDER=~/Manga
+  tput cnorm
+fi
+#make base folder
+mkdir $BASE_FOLDER
+#defining variable for reporting in the end of program
+succeedDownload=0;
+errorDownload=0;
+overalPage=0;
+errorReport="Error in "
+#program start, clearing screen....
+cls
+#ask manga name this will be the folder name
+echo "Enter Manga Name"
+read mangaName
+mkdir "$BASE_FOLDER/$mangaName"
+cd "$BASE_FOLDER/$mangaName"
+echo "Enter number of Chapter to download"
+read chapNum
+echo "Enter first chapter you want to download (start chapter) "
+read startChap
+echo "Enter the link for the chapter $startChap "
+read startChapLink
+#  because usually it start from like chapter 700. so define next chapter for startChapter instead of 1
+nextChapterNum=$startChap
+#Start downloading chapter  until all chapter downloaded
+for (( i = 1; i <= $chapNum ; i++ )); do
+  #for the first looping, define chapter link and current chapter number
+  if(( $i == 1 )); then
+    chapLink=$startChapLink
+    currentChapNum=$startChap
+  else
+  #change chapter link for nextChapter variable which defined in the previous looping
+    chapLink=$nextChapter
+  fi
+  #making directory for the chapter and then move to that directory
+  mkdir "Chapter $currentChapNum"
+  cd "Chapter $currentChapNum"
+  #defining number of next chapter And next Chapter link
+  let "nextChapterNum=$currentChapNum+1"
+  nextChapter=$(getNextChapter $chapLink $nextChapterNum)
+  #get total page of current chapter and store it to totalPage variable
+  getTotalPage $chapLink
+  totalPage=$?
+  #start downloading page 1 to totalPage
+  for (( j = 1; j <= totalPage; j++ )); do
+    cls
+    tput cup 1 1
+    #number of lines in terminal
+    let "lines= $(tput lines) + 1"
+    echo "Downloading page $j ..."
+    tput cup $lines 1;
+    echo "progress "$j" / "$totalPage" Page Downloaded"
+    tput cup 2 0;
+    currentPageNum=$j
+    let "nextPageNum=$currentPageNum+1"
+    if(( $j == 1 )); then  #for the first page set page link to the chapter link (which is page 1 of the chapter)
+      link=$chapLink
+    else
+      link=$nextPage  #if it's not the first page use nextPage variable which defined below
+    fi
+    #defining next page and geting the download link
+    nextPage=$(getNextPage $chapLink $nextPageNum)
+    downloadLink=$(getDownload $link)
+    #starting download
+    wget $downloadLink -O "$i"_"$j.jpg"
+    #if download failed....
+    if(( $? != 0 )) ; then
+      for (( k = 1; k <= $NUMBER_OF_RETRY;k++ )); do
+        sleep $RETRY_WAIT_TIME
+        #curl the web page. usually if it's bad gateway it can be cured
+        #by accesing the web page (mangafox bug)
+        curl -L -s $downloadLink > temp.html
+        cls
+        wget $downloadLink -O "$i"_"$j.jpg"
+        #displaying retry attempt
+        tput cup $(tput lines) 1
+        echo "Retry attemp on page $j [ $k / $NUMBER_OF_RETRY ]"
+        tput cup 0 0
+        if(($? == 0 )); then
+          break;
+        elif(($? != 0 && $k == $NUMBER_OF_RETRY )); then
+          let "$errorDownload++"
+          let "$succeedDownload--"
+          errorReport+=" page $j chapter $i ,"
+        fi
+      done
+    fi
+    let "$succeedDownload++"
+    let "$overallPage ++"
+    cls
+    ##done page
+    done
+    #done chapter
+    cd ../
+    let "currentChapNum++"
+done
+echo Download Finished!
+echo "Downloaded $succeedDownload Page out of $overallPage [ $errorDownload page is error ]"
+#if there is an error echo error report
+if((${#errorReport} > 10 )); then
+  echo $errorReport
+fi
+tput civis #this will hide the cursor
+read -p "Press any key to exit"
+tput cnorm #put the cursor back!
+exit $SUCCESS
