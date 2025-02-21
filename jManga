@@ -23,7 +23,7 @@ if((${#BASE_FOLDER} == 0)); then
   tput cnorm
 fi
 #make base folder
-mkdir $BASE_FOLDER
+mkdir -p $BASE_FOLDER
 #defining variable for reporting in the end of program
 succeedDownload=0;
 errorDownload=0;
@@ -34,7 +34,7 @@ cls
 #ask manga name this will be the folder name
 echo "Enter Manga Name"
 read mangaName
-mkdir "$BASE_FOLDER/$mangaName"
+mkdir -p "$BASE_FOLDER/$mangaName"
 cd "$BASE_FOLDER/$mangaName"
 echo "Enter number of Chapter to download"
 read chapNum
@@ -55,7 +55,7 @@ for (( i = 1; i <= $chapNum ; i++ )); do
     chapLink=$nextChapter
   fi
   #making directory for the chapter and then move to that directory
-  mkdir "Chapter $currentChapNum"
+  mkdir -p "Chapter $currentChapNum"
   cd "Chapter $currentChapNum"
   #defining number of next chapter And next Chapter link
   let "nextChapterNum=$currentChapNum+1"
@@ -91,6 +91,7 @@ for (( i = 1; i <= $chapNum ; i++ )); do
         sleep $RETRY_WAIT_TIME
         #curl the web page. usually if it's bad gateway it can be cured
         #by accesing the web page (mangafox bug)
+        echo "Downloading from: $downloadLink"
         curl -L -s $downloadLink > temp.html
         cls
         wget $downloadLink -O "$i"_"$j.jpg"

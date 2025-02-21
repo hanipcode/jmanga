@@ -20,6 +20,11 @@ fi
 local tempPage=2
 local page=1;
 local fetchUrl=$(curl -s $1)
+echo "fetchUrl: $1"
+if [[ -z "$fetchUrl" ]]; then
+    echo "Error: fetchUrl is empty!"
+    exit 1
+fi
 while true; do
 local getPageNumber=`echo $fetchUrl | awk -v i=$tempPage -F 'value' '{ print $i }'`
 if [[ $getPageNumber == "" ]] ; then
@@ -49,6 +54,7 @@ fi
 local renderPage=$(curl -s $1)
 local getDownloadLink=`echo $renderPage | awk  -F 'img src="' '{ print $2 }'`;
 local getDownloadLink2=`echo $getDownloadLink | cut -d'"' -f'1'`
+echo "Extracted download link: '$getDownloadLink2'"
 if [[ ${getDownloadLink2:0:1} == "/" ]]
 then
   local getDownloadLink2=${getDownloadLink2:1}
@@ -68,7 +74,7 @@ echo $getDownloadLink2
 function getNextPage(){
   local currentPageLink=$1
   local next_page_number=$2
-  local next_page=$(echo $currentPageLink | cut -d'/' --fields=1,2,3,4,5,6,7,8)
+  local next_page=$(echo $currentPageLink | cut -d'/' -f1,2,3,4,5,6,7,8)
   local next_page+="/"
   local next_page+=$next_page_number".html"
   echo $next_page
@@ -94,7 +100,7 @@ function getNextChapter(){
   if(( $next_chapter_num >100 )); then
     next_Chapter_Number=$next_chapter_num
   fi
-  local getNextChapter=`echo $currentChapter | cut -d'/' --fields=1,2,3,4,5,6,7`;
+  local getNextChapter=`echo $currentChapter | cut -d'/' -f1,2,3,4,5,6,7`;
   local getNextChapter+="/c"$next_Chapter_Number"/1.html"
   echo $getNextChapter
 }

@@ -1,8 +1,11 @@
 #!/bin/bash
 #this is the simple installation script
-cp jManga /usr/bin/
-mkdir ~/.jManga
+mkdir -p ~/.jManga/bin
+cp ./jManga ~/.jManga/bin
 chmod -R 777 ~/.jManga
-cp setting  ~/.jManga
-cp function  ~/.jManga
-cp variable ~/.jManga
+cp setting.j  ~/.jManga
+cp function.j  ~/.jManga
+cp variable.j  ~/.jManga
+
+echo 'jManga is installed to ~/.jManga'
+echo 'for easier running you can add ~/.jManga/bin to PATH'
