@@ -1,19 +1,19 @@
 #!/bin/bash
 #external command used : Wget , curl , awk , tput (for interfacing) , grep , sed
 #calling function source and setting source
-source ~/.jManga/setting.j
-source ~/.jManga/function.j
-source ~/.jManga/variable.j
+source ~/.jManga/setting
+source ~/.jManga/function
+source ~/.jManga/variable
 #first time running (BASE_FOLDER Empty)
 if((${#BASE_FOLDER} == 0)); then
   cls
-  sed -i '29s/.*/BASE_FOLDER=~\/Manga/' ~/.jManga/setting.j
+  sed -i '29s/.*/BASE_FOLDER=~\/Manga/' ~/.jManga/setting
   #first time interface
   echo "########################### welcome ##############################"
   echo "#                                                                #"
   echo "# This is the first time you run jManga !                        #"
   echo "# Your manga folder by default set to your yourhomefolder/Manga  #"
-  echo "# you can edit it by editing setting.j in yourhomefolder/.jManga #"
+  echo "# you can edit it by editing setting in yourhomefolder/.jManga #"
   echo "#                                                                #"
   echo "##################################################################"
   tput civis
